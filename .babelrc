@@ -1,0 +1,8 @@
+{
+	"presets": ["flow", "env", "stage-2"],
+	"plugins": [
+		["babel-plugin-dynamic-import-node"],
+		["dynamic-import-node"]
+	],
+	"sourceMap": "inline"
+}
