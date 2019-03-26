@@ -1,0 +1,59 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true,
+    "jquery": true
+  },
+  "rules": {
+    "array-callback-return": ["off"],
+    "arrow-body-style": ["off"],
+    "arrow-parens": ["off"],
+    "class-methods-use-this": 0,
+    "compat/compat": 2,
+    "consistent-return": "off",
+    "comma-dangle": "off",
+    "flowtype-errors/show-errors": 2,
+    "generator-star-spacing": "off",
+    "import/no-unresolved": ["error", { "ignore": ["electron", "atom"] }],
+    "import/no-extraneous-dependencies": "off",
+    "jsx-a11y/no-static-element-interactions": 0,
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "controlComponents": [ "Field" ]
+    }],
+    "jsx-a11y/label-has-for": 0,
+    "max-len": ["off"],
+    "no-cond-assign": ["error", "except-parens"],
+    "no-console": 1,
+    "no-param-reassign": ["error", { "props": false }],
+    "no-return-assign": ["off"],
+    "no-use-before-define": "off",
+    "no-underscore-dangle": "off",
+    "no-unused-vars": ["error", { "args": "none" }],
+    "prefer-destructuring": ["error", {"array": false}],
+    "promise/param-names": 2,
+    "promise/always-return": 0,
+    "promise/catch-or-return": 0,
+    "promise/no-native": 0,
+    "react/jsx-no-bind": "off",
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "react/no-find-dom-node": 0,
+    "react/no-string-refs": 0,
+    "react/prefer-stateless-function": "off",
+    "react/sort-comp": "off"
+  },
+  "plugins": [
+    "flowtype",
+    "flowtype-errors",
+    "import",
+    "promise",
+    "compat",
+    "react"
+  ],
+  "globals": {
+    "atom": "readable",
+    "electron": "readable"
+  }
+}
