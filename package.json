@@ -7,7 +7,8 @@
   "repository": "https://github.com/IBMStreams/build-ibmstreams",
   "license": "Apache-2.0",
   "scripts": {
-    "remotedev": "remotedev --hostname=localhost --port=8000"
+    "remotedev": "remotedev --hostname=localhost --port=8000",
+    "lint": "eslint **/*.js --ignore-pattern node_modules/ --quiet"
   },
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
@@ -49,9 +50,8 @@
     "@types/rx-node": "^0.0.5",
     "archiver": "^3.0.0",
     "classnames": "^2.2.6",
-    "copy-paste": "^1.3.0",
+    "clipboardy": "^1.2.3",
     "immutable": "^4.0.0-rc.12",
-    "jsonwebtoken": "^8.5.0",
     "keytar": "^4.4.1",
     "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
@@ -76,7 +76,7 @@
     "@babel/preset-env": "^7.3.0",
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "10.0.1",
-    "babel-jest": "23.6.0",
+    "babel-jest": "^24.5.0",
     "babel-loader": "^8.0.4",
     "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-register": "6.26.0",
