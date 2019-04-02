@@ -27,7 +27,7 @@ In Atom, to open __build-ibmstreams__ package settings go to Atom->Preferences->
 
 #### IBM Cloud Private for Data: Streams add-on instance
 
-A provisioned IBM Streams add-on is required. You must provide your IBM Cloud Private for Data URL in order for this extension to connect to your add-on instance. Enter your url in the __build-ibmstreams__ package settings and select __IBM Cloud Private for Data Streams addon__.
+A provisioned IBM Streams add-on is required. You must provide your IBM Cloud Private for Data URL in order for this extension to connect to your add-on instance. Enter your url in the __build-ibmstreams__ package settings and select __IBM Cloud Private for Data Streams addon__ in the __Build and submit__ dropdown.
 
 If you need to provision an add-on, start [here](https://www.ibm.com/support/knowledgecenter/SSQNUZ_current/com.ibm.icpdata.doc/streams/intro.html) and follow the instructions.
 
