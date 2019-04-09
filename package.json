@@ -66,6 +66,7 @@
     "request": "^2.88.0",
     "reselect": "^4.0.0",
     "rxjs": "^6.3.2",
+    "semver": "^6.0.0",
     "xmldoc": "^1.1.2"
   },
   "devDependencies": {
