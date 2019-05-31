@@ -1,0 +1,339 @@
+// ************************************************************************
+// * Copyright (C) 2015, International Business Machines Corporation and
+// * others. All Rights Reserved.
+// ************************************************************************
+
+/**
+ * Integration of NextBus Public XML feed with IBM InfoSphere Streams.
+ * Terms and conditions for use of the feed is documented here:
+ * [http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf]
+ *
+ * Note NextBus states: *All polling commands such as for obtaining vehicle locations should
+ * only be run at the most once every 10 seconds*.
+ *
+ * The full description of the feed is at:
+ * [http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf].
+ *
+ * This version of the toolkit is adapted for use in the Introductory Streams Lab.
+ */
+namespace com.ibm.streamslab.transportation.nextbus;
+
+use com.ibm.streamsx.inet.http::* ;
+
+/**
+ * Milliseconds since epoch (1970-01-01 00:00:00.000).
+ * Useful when interfacing to Java and Javascript.
+ */
+type TimeMillis = int64 ;
+
+/**
+ * Cooked representation of a vehicle position.
+ */
+type VehiclePosition =
+         rstring    id,         // vehicle ID
+         TimeMillis time,       // observation time
+         float64    latitude,   // in degrees
+         float64    longitude,  // in degrees
+         float64    speed,      // speed in km/h
+         float64    heading;    // direction of travel, degrees east from north
+
+/**
+* Stream type for the structured representation of all the raw data items in
+* a location record, along with the document (query) timestamp.
+* NOTE: rstring attributes only, to avoid conversion errors.
+*/
+type RawVehiclePosition =
+         rstring    agency,           // agency
+         rstring    id,               // vehicle ID
+         TimeMillis lastTime,
+         rstring    routeTag,         // route ID
+         rstring    dirTag,           // direction (inbound, outbound, etc.)
+         rstring    latitude,         // in degrees
+         rstring    longitude,        // in degrees
+         rstring    secsSinceReport,  // seconds since last location update
+         rstring    predictable,      // Is next arrival at a stop predictable?
+                                      // (convert to boolean before use)
+         rstring    heading,          // direction of travel, degrees from north
+         rstring    speedKmHr ;       // speed in km/h
+
+/**
+ * Get the current time in milliseconds since start of epoch.
+ * @return Current time in milliseconds since start of epoch
+ */
+public stateful TimeMillis currentTimeMillis()
+{
+   timestamp ts = getTimestamp();
+   return (getSeconds(ts) * 1000l) + ((TimeMillis) (getNanoseconds(ts) / 1000000u));
+}
+
+/**
+ * Return the base URL for the NextBus public XML feed.
+ * @return http://webservices.nextbus.com/service/publicXMLFeed
+ */
+public rstring baseUrl()
+{
+   return "http://webservices.nextbus.com/service/publicXMLFeed";
+}
+
+/**
+ * Create a command URL for NextBus with a set pof
+ */
+public rstring commandUrl(rstring command, map<rstring,rstring> params)
+{
+   mutable rstring url = baseUrl() + "?command=" + command;
+   for (rstring key in params) {
+      url = url + "&" + key + "=" + params[key];
+   }
+   return url;
+}
+
+/**
+ * Assert that the requested polling time is ten seconds or greater
+ * as requested by NextBus. See [http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf].
+ */
+public float64 validatePollingTime(float64 period)
+{
+   assert(period >= 10.0, "NextBus requires a polling interval of at least ten seconds. "
+                        + (rstring) period + " s is not allowed.");
+
+   // In case the assert is disabled (by sc option -a, --optimized-code-generation,
+   // which compiles C++ with -NDEBUG, thus turning off assertions.
+   if (period < 10.0)
+   {
+      appTrc(Trace.warn, "Specified polling period of " + (rstring) period
+                       + " s is too short. Continuing with a period of ten seconds,"
+                       + " the minimum required by NextBus.");
+      return 10.0;
+   }
+
+   return period;
+}
+
+/**
+ * Use the agency-specific polling operator originally from the
+ * [https://github.com/IBMStreams/streamsx.transportation|streamsx.transportation]
+ * toolkit to poll [http://webservices.nextbus.com|NextBus.com] and export the resulting
+ * vehicle positions for consumption by the application developed in the Introductory
+ * Streams Lab.
+ *
+ * @param agency The transit agency to poll, from the
+ * [http://webservices.nextbus.com/service/publicXMLFeed?command=agencyList|NextBus agency list].
+ *  Defaults to "sf-muni".
+ * @param period The interval, in seconds, between requests to the NextBus API.
+ *  Must not be less than 10. Defaults to 30.
+ */
+public composite NextBusIngest
+{
+   param
+      expression<rstring> $agency : getSubmissionTimeValue("agency", "sf-muni");
+      expression<float64> $period : (float64) getSubmissionTimeValue("period", "30.0");
+   graph
+      stream<VehiclePosition> VLX = AgencyVehiclePositionPoll()
+      {
+         param
+            agency : $agency;
+            period : $period;
+      }
+
+      // Export vehicle positions for consumption by analytical app
+      () as PositionsExporter = Export(VLX)
+      {
+         param properties: {category = "vehicle positions", feed = "nextbus.com"};
+      }
+}
+
+/**
+ * Poll to get the vehicle locations for a single agency.
+ * @param agency Agency to fetch the raw data from.
+ * @param period Period in seconds to poll the NextBus API, must not be less than 10. Defaults to 30.
+ */
+public composite AgencyVehiclePositionPoll(output VehiclePositions)
+{
+   param
+      expression<rstring> $agency ;
+      expression<float64> $period : 30.0;
+   graph
+      stream<RawVehiclePosition> RawVehiclePositions = AgencyRawVehiclePositionPoll()
+      {
+         param
+            agency : $agency;
+            period : $period;
+      }
+      stream<VehiclePosition> VehiclePositions = CookVehiclePosition(RawVehiclePositions) {}
+}
+
+public composite CookVehiclePosition(
+     input stream<RawVehiclePosition> RawVehiclePositions;
+     output stream<VehiclePosition> VehiclePositions)
+{
+   graph
+   stream<VehiclePosition> VehiclePositions = Custom(RawVehiclePositions)
+   {
+       logic onTuple RawVehiclePositions:
+       {
+           // First ensure we can parse the numeric data successfully.
+           mutable int64 heading_ = 0l;
+           if (parseNumber(heading_, heading) == -1)
+               return;
+           mutable float64 speedKmHr_ = 0.0;
+           if (parseNumber(speedKmHr_, speedKmHr) == -1)
+               return;
+
+           mutable float64 latitude_ = 0.0;
+           if (parseNumber(latitude_, latitude) == -1)
+               return;
+           mutable float64 longitude_ = 0.0;
+           if (parseNumber(longitude_, longitude) == -1)
+               return;
+
+           mutable int64 secsSinceReport_ = 0l;
+           if (parseNumber(secsSinceReport_, secsSinceReport) == -1)
+               return;
+
+           mutable VehiclePosition v = {};
+           assignFrom(v, RawVehiclePositions);
+           v.heading     = (float64) heading_;
+           v.speed   = speedKmHr_;
+           v.latitude    = latitude_;
+           v.longitude   = longitude_ ;
+           v.time        = lastTime - (secsSinceReport_ * 1000l);
+
+           submit(v, VehiclePositions);
+       }
+   }
+}
+
+/**
+* Poll to fetch the raw vehicle locations.
+*/
+composite RawVehiclePositionPoll(output RawVehiclePositions )
+{
+   param
+      expression<map<rstring,rstring>> $params ;
+      expression<float64>              $period : 30.0;
+   graph
+      stream<xml locationXMLDoc> RVLXML = HTTPGetXMLContent()
+      {
+         logic state:
+            map<rstring,rstring> _params = $params;
+         param
+            url                        : commandUrl("vehicleLocations", _params);
+            period                     : validatePollingTime($period);
+            updateParameter            : "t";
+            updateParameterFromContent : "/body/lastTime/@time";
+      }
+
+      // Extract the structured items from each XML record.
+      (stream<RawVehiclePosition> RVL ;
+       stream<map<rstring,rstring> params, TimeMillis lastTime> LastUpdate) as
+         ExtractVehiclePositions = XMLParse(RVLXML)
+      {
+         logic state:
+         {
+            map<rstring,rstring> _params = $params;
+            rstring _agency = _params["a"];
+         }
+         param
+            trigger : "/body/vehicle" , "/body/lastTime";
+            xmlInput : locationXMLDoc ;
+            parsing : permissive ; // Recover from data errors; see below
+
+         output
+            RVL :
+               /*
+                * Data error handling relies on XPath and permissive parsing.
+                * when a requested attribute is missing, XPath returns an empty
+                * string; a numeric cast would then result in a default value
+                * (0 or 0.0). which may or may not be a legitimate value.
+                * If a requested attribute is present but contains garbage, a
+                * numeric cast may fail altogether, which would make the results
+                * for the entire tuple unpredictable and invalid, or worse.
+                * Therefore, just get string results here and perform any numeric
+                * conversions, with appropriate protections, in the next operator.
+                */
+               id              = XPath("@id"),
+               routeTag        = XPath("@routeTag"),
+               dirTag          = XPath("@dirTag"),
+               latitude        = XPath("@lat"),
+               longitude       = XPath("@lon"),
+               secsSinceReport = XPath("@secsSinceReport"),
+               predictable     = XPath("@predictable"),
+               heading         = XPath("@heading"),
+               speedKmHr       = XPath("@speedKmHr"),
+               agency          = _agency;
+            LastUpdate:
+               params   = _params,
+               lastTime = (TimeMillis) XPath("@time");
+      }
+
+      stream<RawVehiclePosition> RawVehiclePositions = Custom(RVL; LastUpdate)
+      {
+         logic
+            state:
+            {
+                mutable boolean seenVehicles = false;
+                mutable boolean seenTime = false;
+                mutable TimeMillis lt; mutable list<RawVehiclePosition> vehicles = [];
+            }
+            onTuple RVL:
+               appendM(vehicles, RawVehiclePositions);
+            onTuple LastUpdate:
+               lt = lastTime;
+            onPunct LastUpdate:
+            {
+               if (currentPunct() != Sys.WindowMarker)
+                  return;
+               seenTime = true;
+               if (seenTime && seenVehicles)
+               {
+                  mutable RawVehiclePosition t = {};
+                  for (RawVehiclePosition vehicle in vehicles)
+                  {
+                     assignFrom(t, vehicle);
+                     t.lastTime = lt;
+                     submit(t, RawVehiclePositions);
+                  }
+                  seenTime = false;
+                  seenVehicles = false;
+                  clearM(vehicles);
+               }
+            }
+            onPunct RVL:
+            {
+               if (currentPunct() != Sys.WindowMarker)
+                  return;
+               seenVehicles = true;
+               if (seenTime && seenVehicles)
+               {
+                  mutable RawVehiclePosition t = {};
+                  for (RawVehiclePosition vehicle in vehicles) {
+                     assignFrom(t, vehicle);
+                     t.lastTime = lt;
+                     submit(t, RawVehiclePositions);
+                  }
+                  seenTime = false;
+                  seenVehicles = false;
+                  clearM(vehicles);
+               }
+            }
+      }
+}
+
+/**
+ * Poll to get the raw vehicle locations for a single agency.
+ * @param agency Agency to fetch the raw data from.
+ * @param period Period in seconds to poll the NextBus API, must not be less than 10. Defaults to 30.
+ */
+public composite AgencyRawVehiclePositionPoll(output RawVehiclePositions )
+{
+   param
+      expression<rstring> $agency ;
+      expression<float64> $period : 30.0;
+   graph
+      stream<RawVehiclePosition> RawVehiclePositions = RawVehiclePositionPoll()
+      {
+         param
+            params : {"a":$agency, "t":(rstring) currentTimeMillis()};
+            period : $period;
+      }
+}

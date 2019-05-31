@@ -5,7 +5,8 @@
     "es6": true,
     "browser": true,
     "node": true,
-    "jquery": true
+    "jquery": true,
+    "jasmine": true
   },
   "rules": {
     "array-callback-return": ["off"],

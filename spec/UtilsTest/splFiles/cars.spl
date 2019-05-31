@@ -1,0 +1,92 @@
+composite cars
+{
+  graph
+  (stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> observations) = Import(){
+    param
+          subscription: category == "vehicle positions";
+
+  }
+  (stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> valid;stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> notvalid)as validation = Split(observations)
+  {
+    param
+        index: substring(id, 0, 1) == "C" && length(id) == 4 ? 0l: 1l;
+
+  }
+
+  () as ErrWriter = FileSink(notvalid)
+  {
+    param
+        file: getThisToolkitDir()+"/data/error.observations";
+        flush: 1u;
+        format: csv;
+
+  }
+
+  (stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> FilteredCars) as FilterCars = Filter(valid)
+  {
+    param
+      filter: id == "C101" || id == "C133";
+  }
+  (stream<rstring id, int64 time, float64 avgSpeed> Averaged)  = Aggregate(FilteredCars)
+  {
+    window
+          FilteredCars: count(5), partitioned;
+
+    param
+        partitionBy: id;
+
+    output
+          Averaged: avgSpeed = Average(speed);
+
+
+
+
+  }
+
+  () as AvgWriter = FileSink(Averaged)
+  {
+    param
+          file: getThisToolkitDir()+"/data/average.speed";
+          flush: 1u;
+          format: csv;
+
+  }
+
+
+  () as FilteredData = FileSink(FilteredCars)
+  {
+    param
+        file: getThisToolkitDir()+"/data/filtered.cars";
+        flush: 1u;
+        format: csv;
+
+  }
+}
+composite FileIngest{
+  graph
+  stream<rstring file>  Files = DirectoryScan()
+  {
+    param
+      directory: getThisToolkitDir()+"/data/in";
+
+  }
+  (stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> Cars) as CarsSrc = FileSource(Files)
+  {
+    param
+        //file:getThisToolkitDir()+"/data/all.cars";
+        format: csv;
+  }
+  (stream<rstring id, int64 time, float64 latitude, float64 longitude, float64 speed, float64 heading> Throttled) = Throttle(Cars)
+  {
+    param
+          rate: 40.0;
+  }
+
+  () as FileExporter = Export(Throttled){
+    param
+        properties: {category = "vehicle positions", feed = "sample file"};
+
+
+  }
+
+}
