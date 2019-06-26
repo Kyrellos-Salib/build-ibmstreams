@@ -3,10 +3,7 @@
 // import { expect } from 'chai';
 import * as JSZip from 'jszip';
 import * as fs from 'fs';
-
-
 import MessageHandler from '../../../../lib/MessageHandler';
-
 import SourceArchiveUtils from '../../../../lib/util/source-archive-utils';
 import MessageHandlerRegistry from '../../../../lib/message-handler-registry';
 /* eslint compat/compat: 0 */
@@ -26,10 +23,11 @@ function getFiles(dir, mainDir, folder, files_) {
   });
   return resultFiles;
 }
+
 describe('build', () => {
   const expectedOutput = `${__dirname}\\splFiles\\.build_NextBusIngest_1000.zip`;
   let files;
-  const toolkitsPath = `${__dirname}\\..\\toolkits`;
+  const toolkitsPath = `${__dirname}\\..\\toolkits\\streamsx.inet-2.9.6`;
   describe('create', () => {
     let messageHandler;
     let fqn;

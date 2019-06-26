@@ -51,6 +51,8 @@
     "archiver": "^3.0.0",
     "chai": "^4.2.0",
     "clipboardy": "^2.0.0",
+    "extract-zip": "^1.6.7",
+    "fs-extra": "^8.0.1",
     "immutable": "^4.0.0-rc.12",
     "jszip": "^3.2.1",
     "keytar": "^4.4.1",

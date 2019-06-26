@@ -10,7 +10,7 @@ import MessageHandlerRegistry from '../../lib/message-handler-registry';
 
 
 describe('source-archive-utils', () => {
-  const toolkitsPath = `${__dirname}\\..\\BuildTest\\BuildSourceArchive\\toolkits`;
+  const toolkitsPath = `${__dirname}\\..\\BuildTest\\BuildSourceArchive\\toolkits\\streamsx.inet-2.9.6`;
   const appRoot = `${__dirname}\\splFiles`;
   describe('getToolkits()', () => {
     const toolkits = SourceArchiveUtils.getToolkits(undefined, toolkitsPath, appRoot);
