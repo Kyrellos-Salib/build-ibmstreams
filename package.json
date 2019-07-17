@@ -57,6 +57,10 @@
     "jszip": "^3.2.1",
     "keytar": "^4.4.1",
     "lodash": "^4.17.13",
+<<<<<<< HEAD
+=======
+    "node-stream-zip": "^1.8.0",
+>>>>>>> ab854e8952428e60d60e93ce044f020bf8187fcc
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.6",
