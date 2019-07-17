@@ -1,8 +1,35 @@
 'use babel';
 
+import * as path from 'path';
+
 const http = require('https');
 const extract = require('extract-zip');
 const fs = require('fs');
+const fse = require('fs-extra');
+
+describe('clean up', () => {
+  let done = false;
+  if (fs.existsSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`)) {
+    fse.removeSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`);
+  }
+  if (fs.existsSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`)) {
+    fs.unlinkSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`);
+  }
+  if (fse.existsSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`)) {
+    fse.removeSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`);
+  }
+  if (!fs.existsSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`)) {
+    fs.mkdirSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`);
+  }
+  if (!fs.existsSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`)) {
+    fs.mkdirSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`);
+  }
+  done = true;
+  it('makes sure everthing is clean', () => {
+    waitsFor(() => done, 20000);
+    expect(done).toEqual(true);
+  });
+});
 
 describe('preTest buildSourceArchive', async () => {
   const toolkitxml = '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n<toolkitModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/toolkit" productVersion="4.3.0.3" xmlns:common="http://www.ibm.com/xmlns/prod/streams/spl/common" xmlns:ti="http://www.ibm.com/xmlns/prod/streams/spl/toolkitInfo" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><toolkit name="com.ibm.streamsx.inet" requiredProductVersion="4.0.1.0" version="2.9.6"></toolkit></toolkitModel>';
@@ -13,14 +40,14 @@ describe('preTest buildSourceArchive', async () => {
       response.pipe(file);
       file.on('finish', () => {
         file.close(cb); // close() is async, call cb after close completes.
-        extract(`${__dirname}\\BuildTest\\BuildSourceArchive\\toolkits\\toolkit.zip`, { dir: `${__dirname}\\BuildTest\\BuildSourceArchive\\toolkits` }, (err) => {
+        extract(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits${path.sep}toolkit.zip`, { dir: `${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits` }, (err) => {
           // extraction is complete. make sure to handle the err
           if (err) {
             console.log(err);
           }
           console.log('extraction complete');
-          fs.unlinkSync(`${__dirname}\\BuildTest\\BuildSourceArchive\\toolkits\\toolkit.zip`);
-          fs.writeFileSync(`${__dirname}\\BuildTest\\BuildSourceArchive\\toolkits\\streamsx.inet-2.9.6\\com.ibm.streamsx.inet\\toolkit.xml`, toolkitxml);
+          fs.unlinkSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits${path.sep}toolkit.zip`);
+          fs.writeFileSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet${path.sep}toolkit.xml`, toolkitxml);
           done = true;
         });
       });
@@ -50,16 +77,16 @@ describe('preTest toolkit utils', async () => {
       response.pipe(file);
       file.on('finish', () => {
         file.close(cb); // close() is async, call cb after close completes.
-        extract(`${__dirname}\\UtilsTest\\toolkits\\toolkit.zip`, { dir: `${__dirname}\\UtilsTest\\toolkits` }, (err) => {
+        extract(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits${path.sep}toolkit.zip`, { dir: `${__dirname}${path.sep}UtilsTest${path.sep}toolkits` }, (err) => {
           // extraction is complete. make sure to handle the err
           if (err) {
             console.log(err);
           }
           console.log('extraction complete');
-          fs.unlinkSync(`${__dirname}\\UtilsTest\\toolkits\\toolkit.zip`);
-          fs.writeFileSync(`${__dirname}\\UtilsTest\\toolkits\\streamsx.inet-2.9.6\\com.ibm.streamsx.inet\\toolkit.xml`, toolkitxml);
-          fs.mkdirSync(`${__dirname}\\UtilsTest\\toolkits\\streamsx.inet-2.9.6\\com.ibm.streamsx.inet2`);
-          fs.writeFileSync(`${__dirname}\\UtilsTest\\toolkits\\streamsx.inet-2.9.6\\com.ibm.streamsx.inet2\\toolkit.xml`, toolkitxml2);
+          fs.unlinkSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits${path.sep}toolkit.zip`);
+          fs.writeFileSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet${path.sep}toolkit.xml`, toolkitxml);
+          fs.mkdirSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet2`);
+          fs.writeFileSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet2${path.sep}toolkit.xml`, toolkitxml2);
           done = true;
         });
       });

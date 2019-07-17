@@ -1,6 +1,7 @@
 'use babel';
 
 // import { expect } from 'chai';
+import * as path from 'path';
 import * as JSZip from 'jszip';
 import * as fs from 'fs';
 import MessageHandler from '../../../../lib/MessageHandler';
@@ -25,13 +26,13 @@ function getFiles(dir, mainDir, folder, files_) {
 }
 
 describe('build', () => {
-  const expectedOutput = `${__dirname}\\splFiles\\.build_NextBusIngest_1000.zip`;
+  const expectedOutput = `${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}withDependencies${path.sep}.build_NextBusIngest_1000.zip`;
   let files;
-  const toolkitsPath = `${__dirname}\\..\\toolkits\\streamsx.inet-2.9.6`;
+  const toolkitsPath = `${__dirname}${path.sep}..${path.sep}toolkits${path.sep}streamsx.inet-2.9.6`;
   describe('create', () => {
     let messageHandler;
     let fqn;
-    const appRoot = `${__dirname}\\splFiles`;
+    const appRoot = `${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}withDependencies`;
     let buildSourceArchiveOutput;
     beforeEach(async () => {
       messageHandler = new MessageHandler(console);
@@ -59,9 +60,9 @@ describe('build', () => {
         });
       });
     };
-    let expectedFiles = getFiles(`${__dirname}/splFiles`, `${__dirname}/splFiles`, 'splFiles');
+    let expectedFiles = getFiles(`${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}withDependencies`, `${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}withDependencies`, 'withDependencies');
     expectedFiles.push('Makefile');
-    expectedFiles.push('splFiles/Makefile');
+    expectedFiles.push('withDependencies/Makefile');
     expectedFiles = getFiles(`${toolkitsPath}/com.ibm.streamsx.inet`, `${toolkitsPath}`, 'toolkits', expectedFiles);
     beforeEach(async () => {
       const file = await readFilePromise(expectedOutput);

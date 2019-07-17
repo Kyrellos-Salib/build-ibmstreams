@@ -3,6 +3,7 @@
 // import { expect } from 'chai';
 import * as JSZip from 'jszip';
 import * as fs from 'fs';
+import * as path from 'path';
 
 import MessageHandler from '../../../../lib/MessageHandler';
 
@@ -11,13 +12,13 @@ import MessageHandlerRegistry from '../../../../lib/message-handler-registry';
 /* eslint compat/compat: 0 */
 
 describe('build', async () => {
-  const expectedOutput = `${__dirname}\\splFiles\\.build_HelloWorld_1000.zip`;
+  const expectedOutput = `${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`;
   let files;
   describe('create', async () => {
     let messageHandler;
     let fqn;
     let buildSourceArchiveOutput;
-    const appRoot = `${__dirname}\\splFiles`;
+    const appRoot = `${__dirname}${path.sep}..${path.sep}..${path.sep}..${path.sep}splFiles${path.sep}simple`;
     const toolkitsPath = '../toolkits';
     beforeEach(async () => {
       messageHandler = new MessageHandler(console);

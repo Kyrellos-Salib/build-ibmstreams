@@ -1,18 +1,19 @@
 'use babel';
 
+import * as path from 'path';
 import StreamsUtils from '../../lib/util/streams-utils';
 
 describe('streams-utils', () => {
   describe('getFqnMainComposites', () => {
     it('tests the getFqnMainComposites function\'s output', () => {
-      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}//splFiles/HelloWorld.spl`);
+      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}HelloWorld.spl`);
       const expectedOutput = { fqn: 'HelloWorld', namespace: '', mainComposites: ['HelloWorld'] };
       expect(fqnMainComposites).toEqual(expectedOutput);
     });
   });
   describe('getFqnMainComposites 2', () => {
     it('tests the getFqnMainComposites (2) function\'s output', () => {
-      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}//splFiles/cars.spl`);
+      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils${path.sep}cars.spl`);
       const expectedOutput = { fqn: '', namespace: '', mainComposites: ['cars', 'FileIngest'] };
       expect(fqnMainComposites).toEqual(expectedOutput);
     });
