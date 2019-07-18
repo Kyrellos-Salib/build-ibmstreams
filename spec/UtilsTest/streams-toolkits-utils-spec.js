@@ -1,11 +1,12 @@
 'use babel';
 
 import * as path from 'path';
+import * as fs from 'fs';
 import StreamsToolkitsUtils from '../../lib/util/streams-toolkits-utils';
 
 describe('Streams-toolkit-utils functions', () => {
   let indexPath;
-  let expectedOutputLocalToolkis;
+  let expectedOutputLocalToolkits;
   let expectedOutputCachedToolkits;
   describe('getLocalToolkitIndexPaths() 1', () => {
     const toolkitsPathSetting = `${__dirname}${path.sep}..${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits${path.sep}streamsx.inet-2.9.6`;
@@ -57,13 +58,13 @@ describe('Streams-toolkit-utils functions', () => {
     beforeEach(() => {
       toolkits = StreamsToolkitsUtils.getLocalToolkits(toolkitsPaths);
     });
-    expectedOutputLocalToolkis = [{
+    expectedOutputLocalToolkits = [{
       name: 'com.ibm.streamsx.inet', version: '2.9.6', indexPath: `${__dirname}${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet${path.sep}toolkit.xml`, label: 'com.ibm.streamsx.inet - 2.9.6', isLocal: true
     }, {
       name: 'com.ibm.streamsx.inet2', version: '2.9.6', indexPath: `${__dirname}${path.sep}toolkits${path.sep}streamsx.inet-2.9.6${path.sep}com.ibm.streamsx.inet2${path.sep}toolkit.xml`, label: 'com.ibm.streamsx.inet2 - 2.9.6', isLocal: true
     }];
     it('tests the getLocalToolkits function\'s output', () => {
-      expect(toolkits).toEqual(expectedOutputLocalToolkis);
+      expect(toolkits).toEqual(expectedOutputLocalToolkits);
     });
   });
   // describe('filterNewestToolkits()', () => {
@@ -90,71 +91,12 @@ describe('Streams-toolkit-utils functions', () => {
   describe('getCachedToolkits()', () => {
     let cachedToolkits;
     beforeEach(() => {
-      cachedToolkits = StreamsToolkitsUtils.getCachedToolkits(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`);
+      cachedToolkits = StreamsToolkitsUtils.getCachedToolkits(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`).map(tk => {
+        const file = tk.indexPath.replace(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}`, '');
+        return file;
+      });
     });
-    expectedOutputCachedToolkits = [{
-      name: 'com.ibm.streams.cep', version: '2.1.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.cep-2.1.1.xml`, label: 'com.ibm.streams.cep - 2.1.1', isLocal: false
-    }, {
-      name: 'com.ibm.streams.cybersecurity', version: '2.1.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.cybersecurity-2.1.1.xml`, label: 'com.ibm.streams.cybersecurity - 2.1.1', isLocal: false
-    }, {
-      name: 'com.ibm.streams.geospatial', version: '3.3.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.geospatial-3.3.2.xml`, label: 'com.ibm.streams.geospatial - 3.3.2', isLocal: false
-    }, {
-      name: 'com.ibm.streams.pmml', version: '2.1.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.pmml-2.1.0.xml`, label: 'com.ibm.streams.pmml - 2.1.0', isLocal: false
-    }, {
-      name: 'com.ibm.streams.rproject', version: '2.1.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rproject-2.1.2.xml`, label: 'com.ibm.streams.rproject - 2.1.2', isLocal: false
-    }, {
-      name: 'com.ibm.streams.rules', version: '2.1.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rules-2.1.2.xml`, label: 'com.ibm.streams.rules - 2.1.2', isLocal: false
-    }, {
-      name: 'com.ibm.streams.rulescompiler', version: '1.2.19', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rulescompiler-1.2.19.xml`, label: 'com.ibm.streams.rulescompiler - 1.2.19', isLocal: false
-    }, {
-      name: 'com.ibm.streams.teda', version: '2.2.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.teda-2.2.1.xml`, label: 'com.ibm.streams.teda - 2.2.1', isLocal: false
-    }, {
-      name: 'com.ibm.streams.text', version: '2.3.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.text-2.3.2.xml`, label: 'com.ibm.streams.text - 2.3.2', isLocal: false
-    }, {
-      name: 'com.ibm.streams.timeseries', version: '5.0.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.timeseries-5.0.1.xml`, label: 'com.ibm.streams.timeseries - 5.0.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.avro', version: '1.2.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.avro-1.2.2.xml`, label: 'com.ibm.streamsx.avro - 1.2.2', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.datetime', version: '1.2.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.datetime-1.2.1.xml`, label: 'com.ibm.streamsx.datetime - 1.2.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.dps', version: '4.0.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.dps-4.0.0.xml`, label: 'com.ibm.streamsx.dps - 4.0.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.elasticsearch', version: '2.1.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.elasticsearch-2.1.1.xml`, label: 'com.ibm.streamsx.elasticsearch - 2.1.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.eventstore', version: '2.0.3', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.eventstore-2.0.3.xml`, label: 'com.ibm.streamsx.eventstore - 2.0.3', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.hbase', version: '3.6.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.hbase-3.6.0.xml`, label: 'com.ibm.streamsx.hbase - 3.6.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.hdfs', version: '4.4.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.hdfs-4.4.1.xml`, label: 'com.ibm.streamsx.hdfs - 4.4.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.inet', version: '3.1.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.inet-3.1.0.xml`, label: 'com.ibm.streamsx.inet - 3.1.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.iot', version: '1.2.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.iot-1.2.0.xml`, label: 'com.ibm.streamsx.iot - 1.2.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.jdbc', version: '1.6.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.jdbc-1.6.0.xml`, label: 'com.ibm.streamsx.jdbc - 1.6.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.json', version: '1.5.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.json-1.5.2.xml`, label: 'com.ibm.streamsx.json - 1.5.2', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.kafka', version: '1.9.4', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.kafka-1.9.4.xml`, label: 'com.ibm.streamsx.kafka - 1.9.4', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.messagehub', version: '1.9.3', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.messagehub-1.9.3.xml`, label: 'com.ibm.streamsx.messagehub - 1.9.3', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.messaging', version: '5.4.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.messaging-5.4.1.xml`, label: 'com.ibm.streamsx.messaging - 5.4.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.mqtt', version: '1.0.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.mqtt-1.0.1.xml`, label: 'com.ibm.streamsx.mqtt - 1.0.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.network', version: '3.2.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.network-3.2.1.xml`, label: 'com.ibm.streamsx.network - 3.2.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.objectstorage', version: '1.9.2', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.objectstorage-1.9.2.xml`, label: 'com.ibm.streamsx.objectstorage - 1.9.2', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.rabbitmq', version: '1.2.1', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.rabbitmq-1.2.1.xml`, label: 'com.ibm.streamsx.rabbitmq - 1.2.1', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.sparkmllib', version: '1.2.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.sparkmllib-1.2.0.xml`, label: 'com.ibm.streamsx.sparkmllib - 1.2.0', isLocal: false
-    }, {
-      name: 'com.ibm.streamsx.topology', version: '1.12.10', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.topology-1.12.10.xml`, label: 'com.ibm.streamsx.topology - 1.12.10', isLocal: false
-    }, {
-      name: 'spl', version: '1.4.0', indexPath: `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}spl-1.4.0.xml`, label: 'spl - 1.4.0', isLocal: false
-    }];
+    expectedOutputCachedToolkits = fs.readdirSync(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`);
     it('tests the getCachedToolkits function\'s output', () => {
       expect(cachedToolkits).toEqual(expectedOutputCachedToolkits);
     });
@@ -164,37 +106,7 @@ describe('Streams-toolkit-utils functions', () => {
     beforeEach(() => {
       cachedToolkitsIndex = StreamsToolkitsUtils.getCachedToolkitIndexPaths(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`);
     });
-    const expectedOutput = [`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.cep-2.1.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.cybersecurity-2.1.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.geospatial-3.3.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.pmml-2.1.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rproject-2.1.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rules-2.1.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.rulescompiler-1.2.19.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.teda-2.2.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.text-2.3.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streams.timeseries-5.0.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.avro-1.2.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.datetime-1.2.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.dps-4.0.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.elasticsearch-2.1.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.eventstore-2.0.3.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.hbase-3.6.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.hdfs-4.4.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.inet-3.1.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.iot-1.2.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.jdbc-1.6.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.json-1.5.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.kafka-1.9.4.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.messagehub-1.9.3.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.messaging-5.4.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.mqtt-1.0.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.network-3.2.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.objectstorage-1.9.2.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.rabbitmq-1.2.1.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.sparkmllib-1.2.0.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}com.ibm.streamsx.topology-1.12.10.xml`,
-      `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}spl-1.4.0.xml`];
+    const expectedOutput = expectedOutputCachedToolkits.map(file => `${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}${file}`);
     it('tests the getCachedToolkitIndexPaths function\'s output', () => {
       expect(cachedToolkitsIndex).toEqual(expectedOutput);
     });
@@ -202,9 +114,13 @@ describe('Streams-toolkit-utils functions', () => {
   describe('getAllToolkits()', () => {
     let toolkits;
     beforeEach(() => {
-      toolkits = StreamsToolkitsUtils.getAllToolkits(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`, `${__dirname}${path.sep}toolkits${path.sep}streamsx.inet-2.9.6`);
+      toolkits = StreamsToolkitsUtils.getAllToolkits(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache`, `${__dirname}${path.sep}toolkits${path.sep}streamsx.inet-2.9.6`).map(tk => {
+        const file = tk.indexPath.replace(`${__dirname}${path.sep}..${path.sep}..${path.sep}toolkitsCache${path.sep}`, '');
+        return file;
+      });
     });
-    const expectedOutput = expectedOutputCachedToolkits.concat(expectedOutputLocalToolkis);
+    const expectedIndexLocalToolkits = expectedOutputLocalToolkits.map(tk => tk.indexPath);
+    const expectedOutput = expectedOutputCachedToolkits.concat(expectedIndexLocalToolkits);
     it('tests the getAllToolkits function\'s output', () => {
       expect(toolkits).toEqual(expectedOutput);
     });
