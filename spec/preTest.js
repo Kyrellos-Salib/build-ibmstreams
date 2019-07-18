@@ -12,8 +12,8 @@ describe('clean up', () => {
   if (fs.existsSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`)) {
     fse.removeSync(`${__dirname}${path.sep}BuildTest${path.sep}BuildSourceArchive${path.sep}toolkits`);
   }
-  if (fs.existsSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`)) {
-    fs.unlinkSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`);
+  if (fs.existsSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_test_1000.zip`)) {
+    fs.unlinkSync(`${__dirname}${path.sep}splFiles${path.sep}simple${path.sep}.build_test_1000.zip`);
   }
   if (fse.existsSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`)) {
     fse.removeSync(`${__dirname}${path.sep}UtilsTest${path.sep}toolkits`);

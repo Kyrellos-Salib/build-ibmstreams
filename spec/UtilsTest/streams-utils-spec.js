@@ -20,14 +20,14 @@ describe('streams-utils', () => {
   });
   describe('parseV4ServiceCredentials', () => {
     it('tests the parseV4ServiceCredentials function\'s output', () => {
-      const parsedCreds = StreamsUtils.parseV4ServiceCredentials('{"apikey": "nzbx0lzhMR9-JEABT5v0ekKwvD9T601bRCf-O4xeB2N7",\n"iam_apikey_description": "Auto-generated for key bb406ea8-3121-4786-ba2f-e9a08ce53eea",\n"iam_apikey_name": "Service credentials-1",\n"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",\n"iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a/0dbb2318ddfc499591e23816b185fa8a::serviceid:ServiceId-41d0bc8f-955c-4b7f-833f-e4282eba3d85",\n"v2_rest_url": "https://svc-cf.us-south.streaming-analytics.cloud.ibm.com/v2/streaming_analytics/11134f6b-f7ef-4546-a1cf-b5ca5ed2b1da"}');
+      const parsedCreds = StreamsUtils.parseV4ServiceCredentials('{"apikey": "test key",\n"iam_apikey_description": "test description",\n"iam_apikey_name": "test name",\n"iam_role_crn": "test role",\n"iam_serviceid_crn": "test id",\n"v2_rest_url": "test url"}');
       const expectedOutput = {
-        apikey: 'nzbx0lzhMR9-JEABT5v0ekKwvD9T601bRCf-O4xeB2N7',
-        iam_apikey_description: 'Auto-generated for key bb406ea8-3121-4786-ba2f-e9a08ce53eea',
-        iam_apikey_name: 'Service credentials-1',
-        iam_role_crn: 'crn:v1:bluemix:public:iam::::serviceRole:Manager',
-        iam_serviceid_crn: 'crn:v1:bluemix:public:iam-identity::a/0dbb2318ddfc499591e23816b185fa8a::serviceid:ServiceId-41d0bc8f-955c-4b7f-833f-e4282eba3d85',
-        v2_rest_url: 'https://svc-cf.us-south.streaming-analytics.cloud.ibm.com/v2/streaming_analytics/11134f6b-f7ef-4546-a1cf-b5ca5ed2b1da'
+        apikey: 'test key',
+        iam_apikey_description: 'test description',
+        iam_apikey_name: 'test name',
+        iam_role_crn: 'test role',
+        iam_serviceid_crn: 'test id',
+        v2_rest_url: 'test url'
       };
       expect(parsedCreds).toEqual(expectedOutput);
     });
