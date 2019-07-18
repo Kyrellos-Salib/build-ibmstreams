@@ -46,8 +46,8 @@ describe('Register IBM Streams Extension Commands', () => {
           name: 'spl-build:open-public-cloud-dashboard'
         },
         {
-          displayName: 'IBM Streams: Open IBM Cloud Private for Data Dashboard',
-          description: 'IBM Cloud Private for Data Dashboard webpage for managing the IBM Streams add-on',
+          displayName: 'IBM Streams: Open IBM Cloud Pak for Data Dashboard',
+          description: 'IBM Cloud Pak for Data Dashboard webpage for managing the IBM Streams add-on',
           name: 'spl-build:open-icp4d-dashboard'
         },
         {
