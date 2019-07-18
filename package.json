@@ -9,7 +9,7 @@
   "scripts": {
     "remotedev": "remotedev --hostname=localhost --port=8000",
     "lint": "eslint **/*.js --ignore-pattern node_modules/ --quiet",
-    "test": "atom --test spec/preTest.js && atom -t spec/ && atom --test spec/postTest.js"
+    "test": "atom --test spec/preTest.js && atom -t spec/ || atom --test spec/postTest.js"
   },
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
