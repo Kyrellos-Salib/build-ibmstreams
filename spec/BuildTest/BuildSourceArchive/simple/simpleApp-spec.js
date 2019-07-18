@@ -54,7 +54,7 @@ describe('build', async () => {
 
     it('checks if the right content is inside', () => {
       fs.unlinkSync(expectedOutput);
-      expect(files).toEqual(['Makefile', 'HelloWorld.spl']);
+      expect(files).toEqual(['Makefile', 'simpleApp.spl']);
     });
   });
 });

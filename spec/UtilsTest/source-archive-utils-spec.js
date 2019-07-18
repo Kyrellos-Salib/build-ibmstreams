@@ -20,10 +20,10 @@ describe('source-archive-utils', () => {
     });
   });
   describe('observableBuildSourceArchive()', () => {
-    const fqn = 'HelloWorld';
+    const fqn = 'test';
     let observableArchive;
     let messageHandler;
-    const expectedPath = `${__dirname}${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}.build_HelloWorld_1000.zip`;
+    const expectedPath = `${__dirname}${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}.build_test_1000.zip`;
     const expectedOutput = {
       type: 'SOURCE_ARCHIVE_CREATED',
       archivePath: expectedPath,
@@ -47,7 +47,7 @@ describe('source-archive-utils', () => {
   });
   describe('getApplicationRoot()', () => {
     const projectPaths = [__dirname];
-    const selectedFile = `${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils${path.sep}cars.spl`;
+    const selectedFile = `${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils${path.sep}twoCompositesApp.spl`;
     let appRootT;
     const expectedOutput = `${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils`;
     beforeEach(() => {

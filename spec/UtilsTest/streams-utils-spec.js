@@ -6,15 +6,15 @@ import StreamsUtils from '../../lib/util/streams-utils';
 describe('streams-utils', () => {
   describe('getFqnMainComposites', () => {
     it('tests the getFqnMainComposites function\'s output', () => {
-      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}HelloWorld.spl`);
-      const expectedOutput = { fqn: 'HelloWorld', namespace: '', mainComposites: ['HelloWorld'] };
+      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}simple${path.sep}simpleApp.spl`);
+      const expectedOutput = { fqn: 'test', namespace: '', mainComposites: ['test'] };
       expect(fqnMainComposites).toEqual(expectedOutput);
     });
   });
   describe('getFqnMainComposites 2', () => {
     it('tests the getFqnMainComposites (2) function\'s output', () => {
-      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils${path.sep}cars.spl`);
-      const expectedOutput = { fqn: '', namespace: '', mainComposites: ['cars', 'FileIngest'] };
+      const fqnMainComposites = StreamsUtils.getFqnMainComposites(`${__dirname}${path.sep}..${path.sep}splFiles${path.sep}utils${path.sep}twoCompositesApp.spl`);
+      const expectedOutput = { fqn: '', namespace: '', mainComposites: ['testName1', 'testName2'] };
       expect(fqnMainComposites).toEqual(expectedOutput);
     });
   });
