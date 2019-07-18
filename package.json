@@ -8,7 +8,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "remotedev": "remotedev --hostname=localhost --port=8000",
-    "lint": "eslint **/*.js --ignore-pattern node_modules/ --quiet"
+    "lint": "eslint **/*.js --ignore-pattern node_modules/ --quiet",
+    "pretest": "atom --test spec/preTest.js",
+    "test": "atom -t spec/ || atom --test spec/postTest.js",
+    "posttest": "atom --test spec/postTest.js"
   },
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
@@ -49,10 +52,14 @@
     "@types/rx-dom": "^7.0.0",
     "@types/rx-node": "^0.0.5",
     "archiver": "^3.0.0",
+    "chai": "^4.2.0",
     "clipboardy": "^2.0.0",
+    "extract-zip": "^1.6.7",
+    "fs-extra": "^8.0.1",
     "immutable": "^4.0.0-rc.12",
+    "jszip": "^3.2.1",
     "keytar": "^4.4.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.6",
