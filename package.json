@@ -54,8 +54,6 @@
     "archiver": "^3.0.0",
     "chai": "^4.2.0",
     "clipboardy": "^2.0.0",
-    "extract-zip": "^1.6.7",
-    "fs-extra": "^8.0.1",
     "immutable": "^4.0.0-rc.12",
     "jszip": "^3.2.1",
     "keytar": "^4.4.1",
@@ -101,6 +99,8 @@
     "eslint-watch": "^5.0.1",
     "redux-devtools-extension": "^2.13.8",
     "remote-redux-devtools": "^0.5.16",
-    "remotedev-server": "^0.3.1"
+    "remotedev-server": "^0.3.1",
+    "extract-zip": "^1.6.7",
+    "fs-extra": "^8.0.1"
   }
 }
