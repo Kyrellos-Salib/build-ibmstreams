@@ -52,6 +52,8 @@
     "@types/rx-dom": "^7.0.0",
     "@types/rx-node": "^0.0.5",
     "archiver": "^3.0.0",
+    "carbon-components": "^10.4.1",
+    "carbon-components-react": "^7.4.1",
     "chai": "^4.2.0",
     "clipboardy": "^2.0.0",
     "extract-zip": "^1.6.7",
@@ -60,6 +62,7 @@
     "jszip": "^3.2.1",
     "keytar": "^4.4.1",
     "lodash": "^4.17.13",
+    "node-sass": "^4.12.0",
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.6",
@@ -101,6 +104,7 @@
     "eslint-watch": "^5.0.1",
     "redux-devtools-extension": "^2.13.8",
     "remote-redux-devtools": "^0.5.16",
-    "remotedev-server": "^0.3.1"
+    "remotedev-server": "^0.3.1",
+    "sqlite3": "^4.0.7"
   }
 }
