@@ -76,6 +76,7 @@
     "reselect": "^4.0.0",
     "rxjs": "^6.3.2",
     "semver": "^6.0.0",
+    "tar-fs": "^2.0.0",
     "xmldoc": "^1.1.2"
   },
   "devDependencies": {
